@@ -1,5 +1,6 @@
 package com.yelp.pyleus;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
@@ -36,9 +37,9 @@ import storm.kafka.ZkHosts;
 
 public class PyleusTopologyBuilder {
     public static final String YAML_FILENAME = StringUtils.join(
-    		new String[] {"", "resources", "pyleus_topology.yaml"},System.getProperty("path.separator"));
+    		new String[] {"", "resources", "pyleus_topology.yaml"}, File.separator);
     public static final String KAFKA_ZK_ROOT_FMT = StringUtils.join(
-    		new String[] {"", "pyleus-kafka-offsets", "%s"},System.getProperty("path.separator"));
+    		new String[] {"", "pyleus-kafka-offsets", "%s"}, File.separator);
     public static final String KAFKA_CONSUMER_ID_FMT = "pyleus-%s";
     public static final String MSGPACK_SERIALIZER_CLASS = MessagePackSerializer.class.getName();
     
