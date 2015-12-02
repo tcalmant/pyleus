@@ -1,6 +1,8 @@
 package com.yelp.pyleus;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
@@ -13,7 +15,7 @@ public class PythonComponentsFactory {
     public static final String VIRTUALENV_INTERPRETER = "pyleus_venv/bin/python";
     public static final String MODULE_OPTION = "-m";
 
-    private String[] buildCommand(final String module, final Map<String, Object> argumentsMap,
+    private String[] buildCommandUnix(final String module, final Map<String, Object> argumentsMap,
         final String loggingConfig, final String serializerConfig) {
 
         String[] command = new String[3];
@@ -47,6 +49,48 @@ public class PythonComponentsFactory {
 
         return command;
     }
+    
+    private String[] buildCommandWindows(final String module, final Map<String, Object> argumentsMap,
+            final String loggingConfig, final String serializerConfig) {
+    	
+    	final List<String> command = new ArrayList<String>();
+    	command.add(VIRTUALENV_INTERPRETER + ".exe");
+    	command.add(MODULE_OPTION);
+    	command.add(module);
+    	
+    	if (argumentsMap != null) {
+            Gson gson = new GsonBuilder().create();
+            String json = gson.toJson(argumentsMap);
+
+            // json = json.replace("\"", "\\\"");
+            command.add("--options");
+            command.add(json);
+        }
+    	
+    	{
+            Map<String, Object> pyleusConfig = new HashMap<String, Object>();
+            pyleusConfig.put("logging_config_path", loggingConfig);
+            pyleusConfig.put("serializer", serializerConfig);
+            Gson gson = new GsonBuilder().create();
+            String json = gson.toJson(pyleusConfig);
+            
+            // json = json.replace("\"", "\\\"");
+            command.add("--pyleus-config");
+            command.add(json);
+        }
+    	
+    	return command.toArray(new String[command.size()]);
+    }
+    
+    private String[] buildCommand(final String module, final Map<String, Object> argumentsMap,
+            final String loggingConfig, final String serializerConfig) {
+    	
+    	if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+    		return buildCommandWindows(module, argumentsMap, loggingConfig, serializerConfig);
+    	} else {
+    		return buildCommandUnix(module, argumentsMap, loggingConfig, serializerConfig);
+    	}
+    }
 
     public PythonBolt createPythonBolt(final String module, final Map<String, Object> argumentsMap,
         final String loggingConfig, final String serializerConfig) {
@@ -59,5 +103,4 @@ public class PythonComponentsFactory {
 
         return new PythonSpout(buildCommand(module, argumentsMap, loggingConfig, serializerConfig));
     }
-
 }
