@@ -5,39 +5,43 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.yaml.snakeyaml.error.YAMLException;
 
-import backtype.storm.Config;
-import backtype.storm.LocalCluster;
-import backtype.storm.StormSubmitter;
-import backtype.storm.generated.StormTopology;
-import backtype.storm.topology.BoltDeclarer;
-import backtype.storm.topology.IRichBolt;
-import backtype.storm.topology.IRichSpout;
-import backtype.storm.topology.SpoutDeclarer;
-import backtype.storm.topology.TopologyBuilder;
-import backtype.storm.tuple.Fields;
-import backtype.storm.spout.SchemeAsMultiScheme;
-import backtype.storm.spout.RawScheme;
-import storm.kafka.KafkaSpout;
-import storm.kafka.KeyValueSchemeAsMultiScheme;
-import storm.kafka.SpoutConfig;
-import storm.kafka.StringKeyValueScheme;
-import storm.kafka.ZkHosts;
-
 import com.yelp.pyleus.bolt.PythonBolt;
+import com.yelp.pyleus.serializer.MessagePackSerializer;
 import com.yelp.pyleus.spec.BoltSpec;
 import com.yelp.pyleus.spec.ComponentSpec;
 import com.yelp.pyleus.spec.SpoutSpec;
 import com.yelp.pyleus.spec.TopologySpec;
 import com.yelp.pyleus.spout.PythonSpout;
 
-public class PyleusTopologyBuilder {
+import backtype.storm.Config;
+import backtype.storm.LocalCluster;
+import backtype.storm.StormSubmitter;
+import backtype.storm.generated.StormTopology;
+import backtype.storm.spout.RawScheme;
+import backtype.storm.spout.SchemeAsMultiScheme;
+import backtype.storm.topology.BoltDeclarer;
+import backtype.storm.topology.IRichBolt;
+import backtype.storm.topology.IRichSpout;
+import backtype.storm.topology.SpoutDeclarer;
+import backtype.storm.topology.TopologyBuilder;
+import backtype.storm.tuple.Fields;
+import storm.kafka.KafkaSpout;
+import storm.kafka.KeyValueSchemeAsMultiScheme;
+import storm.kafka.SpoutConfig;
+import storm.kafka.StringKeyValueScheme;
+import storm.kafka.ZkHosts;
 
-    public static final String YAML_FILENAME = "/resources/pyleus_topology.yaml";
-    public static final String KAFKA_ZK_ROOT_FMT = "/pyleus-kafka-offsets/%s";
+public class PyleusTopologyBuilder {
+    public static final String YAML_FILENAME = StringUtils.join(
+    		new String[] {"", "resources", "pyleus_topology.yaml"},System.getProperty("path.separator"));
+    public static final String KAFKA_ZK_ROOT_FMT = StringUtils.join(
+    		new String[] {"", "pyleus-kafka-offsets", "%s"},System.getProperty("path.separator"));
     public static final String KAFKA_CONSUMER_ID_FMT = "pyleus-%s";
-    public static final String MSGPACK_SERIALIZER_CLASS = "com.yelp.pyleus.serializer.MessagePackSerializer";
+    public static final String MSGPACK_SERIALIZER_CLASS = MessagePackSerializer.class.getName();
+    
 
     public static final PythonComponentsFactory pyFactory = new PythonComponentsFactory();
 
