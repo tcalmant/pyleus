@@ -16,12 +16,16 @@ import zipfile
 
 from pyleus import __version__
 from pyleus.cli.topology_spec import TopologySpec
-from pyleus.cli.virtualenv_proxy import VirtualenvProxy
 from pyleus.compat import StringIO
 from pyleus.storm.component import DESCRIBE_OPT
 from pyleus.exception import InvalidTopologyError
 from pyleus.exception import JarError
 from pyleus.utils import expand_path
+
+try:
+    from pyleus.cli.venv_proxy import VirtualenvProxy
+except ImportError:
+    from pyleus.cli.virtualenv_proxy import VirtualenvProxy
 
 RESOURCES_PATH = "resources"
 YAML_FILENAME = "pyleus_topology.yaml"
