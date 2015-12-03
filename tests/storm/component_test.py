@@ -110,7 +110,7 @@ class TestComponent(ComponentTestCase):
         with mock.patch.object(builtins, 'open', autospec=True) as mock_open:
             self.instance._create_pidfile("pid_dir", "pid")
 
-        mock_open.assert_called_once_with("pid_dir/pid", 'a')
+        mock_open.assert_called_once_with(os.path.join("pid_dir", "pid"), 'a')
 
     def test__init_component(self):
         handshake_msg = {

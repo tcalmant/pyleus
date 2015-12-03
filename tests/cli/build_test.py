@@ -34,13 +34,14 @@ class TestBuild(object):
         mock_arc = mock.Mock(autospec=True)
         mock_walk.return_value = [
             ("foo", ["bar"], ["baz"]),
-            ("foo/bar", [], ["qux"])
+            (os.path.join("foo", "bar"), [], ["qux"])
         ]
         build._zip_dir("foo", mock_arc)
         mock_walk.assert_any_call("foo")
         expected = [
-            mock.call("foo/baz", "baz", zipfile.ZIP_DEFLATED),
-            mock.call("foo/bar/qux", "bar/qux", zipfile.ZIP_DEFLATED),
+            mock.call(os.path.join("foo", "baz"), "baz", zipfile.ZIP_DEFLATED),
+            mock.call(os.path.join("foo", "bar", "qux"),
+                      os.path.join("bar", "qux"), zipfile.ZIP_DEFLATED),
         ]
         mock_arc.write.assert_has_calls(expected)
 
@@ -55,8 +56,8 @@ class TestBuild(object):
     def test__validate_venv_dir_contains_venv(self, mock_exists):
         mock_exists.return_value = True
         with pytest.raises(exception.InvalidTopologyError):
-                build._validate_venv("foo", "foo/bar_venv")
-        mock_exists.assert_called_once_with("foo/bar_venv")
+                build._validate_venv("foo", os.path.join("foo", "bar_venv"))
+        mock_exists.assert_called_once_with(os.path.join("foo", "bar_venv"))
 
     @mock.patch.object(build, '_remove_pyleus_base_jar', autospec=True)
     @mock.patch.object(build, 'VirtualenvProxy', autospec=True)
@@ -106,12 +107,16 @@ class TestBuild(object):
 
     @mock.patch.object(glob, 'glob', autospec=True)
     def test__content_to_copy(self, mock_glob):
-        mock_glob.return_value = ["foo/good1.mkv", "foo/good2.bat",
-                                  "foo/bad1.txt", "foo/bad2.jar"]
-        content = build._content_to_copy("foo", ["foo/bad1.txt",
-                                                 "foo/bad2.jar"])
-        mock_glob.assert_called_once_with("foo/*")
-        assert content == set(["foo/good1.mkv", "foo/good2.bat"])
+        mock_glob.return_value = [os.path.join("foo", "good1.mkv"),
+                                  os.path.join("foo", "good2.bat"),
+                                  os.path.join("foo", "bad1.txt"),
+                                  os.path.join("foo", "bad2.jar")]
+        content = build._content_to_copy("foo",
+                                         [os.path.join("foo", "bad1.txt"),
+                                          os.path.join("foo", "bad2.jar")])
+        mock_glob.assert_called_once_with(os.path.join("foo", "*"))
+        assert content == set([os.path.join("foo", "good1.mkv"),
+                               os.path.join("foo", "good2.bat")])
 
     @mock.patch.object(build, '_content_to_copy', autospec=True)
     @mock.patch.object(os.path, 'isdir', autospec=True)
@@ -119,15 +124,18 @@ class TestBuild(object):
     @mock.patch.object(shutil, 'copy2', autospec=True)
     def test__copy_dir_content(
             self, mock_copy2, mock_copytree, mock_isdir, mock_cont_to_copy):
-        mock_cont_to_copy.return_value = ["foo/ham", "foo/honey"]
+        mock_cont_to_copy.return_value = [os.path.join("foo", "ham"),
+                                          os.path.join("foo", "honey")]
         mock_isdir.side_effect = iter([True, False])
         build._copy_dir_content(src="foo", dst="bar", exclude=[])
         mock_cont_to_copy.assert_called_once_with("foo", [])
-        expected = [mock.call("foo/ham"), mock.call("foo/honey")]
+        expected = [mock.call(os.path.join("foo", "ham")),
+                    mock.call(os.path.join("foo", "honey"))]
         mock_isdir.assert_has_calls(expected)
         mock_copytree.assert_called_once_with(
-            "foo/ham", "bar/ham", symlinks=True)
-        mock_copy2.assert_called_once_with("foo/honey", "bar")
+            os.path.join("foo", "ham"), os.path.join("bar", "ham"),
+            symlinks=True)
+        mock_copy2.assert_called_once_with(os.path.join("foo", "honey"), "bar")
 
     @mock.patch.object(build, 'expand_path', autospec=True)
     def test__build_otuput_path(self, mock_ex_path):
