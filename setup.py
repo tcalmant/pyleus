@@ -73,6 +73,23 @@ class build_java(Command):
         self._copy_jar()
 
 
+try:
+    from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
+except ImportError:
+    # No support of wheel
+    pass
+else:
+    class bdist_wheel(_bdist_wheel):
+
+        sub_commands = [('build_java', None)]
+
+        def run(self):
+            for cmd_name in self.get_sub_commands():
+                self.run_command(cmd_name)
+
+            _bdist_wheel.run(self)
+
+
 class bdist(_bdist):
 
     sub_commands = [('build_java', None)]
