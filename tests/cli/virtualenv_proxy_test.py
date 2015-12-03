@@ -1,5 +1,7 @@
 import os
 import subprocess
+import sys
+import tempfile
 
 import pytest
 
@@ -8,8 +10,10 @@ from pyleus.cli import virtualenv_proxy
 from pyleus.cli.virtualenv_proxy import VirtualenvProxy
 from pyleus.testing import mock, builtins
 
+pytestmark = pytest.mark.skipif(sys.version_info >= (3, 3),
+                                reason="On Python 3.3, venv is preferred")
 
-VENV_PATH = "/tmp/my/beloved/venv"
+VENV_PATH = tempfile.mkdtemp(prefix="pyleus_virtualenv_")
 PYPI_URL = "http://pypi-ninja.ninjacorp.com/simple"
 
 
