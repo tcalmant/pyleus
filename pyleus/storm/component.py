@@ -1,7 +1,7 @@
 """Module containing the base class for all pyleus components and a wrapper
 class around Storm configurations.
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 import argparse
 from collections import deque

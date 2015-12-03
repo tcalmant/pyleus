@@ -2,7 +2,7 @@
 determine the value of BASE_JAR_PATH inside _another_ virtualenv, so it can be
 removed to save space.
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 import pyleus
 
