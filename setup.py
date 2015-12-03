@@ -77,7 +77,7 @@ try:
     from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 except ImportError:
     # No support of wheel
-    pass
+    bdist_wheel = None
 else:
     class bdist_wheel(_bdist_wheel):
 
@@ -110,6 +110,15 @@ class sdist(_sdist):
             self.run_command(cmd_name)
 
         _sdist.run(self)
+
+
+cmd_classes = {
+    'build_java': build_java,
+    'bdist': bdist,
+    'sdist': sdist}
+
+if bdist_wheel is not None:
+    cmd_classes['bdist_wheel'] = bdist_wheel
 
 
 def readme():
@@ -154,9 +163,5 @@ setup(
         "six",
     ] + extra_install_requires,
     package_data={'pyleus': [BASE_JAR]},
-    cmdclass={
-        'build_java': build_java,
-        'bdist': bdist,
-        'sdist': sdist,
-    },
+    cmdclass=cmd_classes,
 )
