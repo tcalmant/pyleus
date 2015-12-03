@@ -155,7 +155,11 @@ setup(
     packages=[
         "pyleus", "pyleus.cli", "pyleus.cli.commands",
         "pyleus.storm", "pyleus.storm.serializers"],
-    scripts=["scripts/pyleus"],
+    entry_points={
+        'console_scripts': [
+            'pyleus = pyleus.cli.cli:main',
+        ],
+    },
     install_requires=[
         "PyYAML",
         "msgpack-python",
