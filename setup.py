@@ -11,7 +11,7 @@ from setuptools.command.sdist import sdist as _sdist
 from pyleus import __version__
 from pyleus import BASE_JAR
 
-JAVA_SRC_DIR = "topology_builder/"
+JAVA_SRC_DIR = "topology_builder"
 BASE_JAR_SRC = os.path.join(JAVA_SRC_DIR, "dist", BASE_JAR)
 BASE_JAR_DST = os.path.join("pyleus", BASE_JAR)
 
@@ -27,8 +27,43 @@ class build_java(Command):
     def finalize_options(self):
         pass
 
+    def _make_jar_make(self):
+        make_path = shutil.which('make')
+        if not make_path:
+            raise IOError("make executable not found")
+
+        subprocess.check_call([make_path, "-C", JAVA_SRC_DIR])
+
+    def _make_jar_maven(self):
+        pom_file = os.path.join(JAVA_SRC_DIR, 'pom.xml')
+
+        # Try the "mvn" command (in path)
+        mvn_path = shutil.which('mvn')
+        if mvn_path:
+            # Try the "mvn" command (in path)
+            subprocess.check_call([mvn_path, '-f', pom_file, 'package'])
+            return True
+
+        # Try with the MAVEN_HOME path, if any
+        maven_home = os.getenv("MAVEN_HOME")
+        if not maven_home or not os.path.exists(maven_home):
+            raise IOError("Maven executable not found")
+
+        mvn_path = os.path.join(maven_home, 'bin', 'mvn')
+        if os.name == 'nt':
+            mvn_path += ".cmd"
+
+        subprocess.check_call([mvn_path, '-f', pom_file, 'package'])
+
     def _make_jar(self):
-        subprocess.check_call(["make", "-C", JAVA_SRC_DIR])
+        try:
+            # Standard way, using make
+            self._make_jar_make()
+        except IOError:
+            pass
+
+        # Fall back on a direct call to Maven
+        self._make_jar_maven()
 
     def _copy_jar(self):
         shutil.copy(BASE_JAR_SRC, BASE_JAR_DST)
