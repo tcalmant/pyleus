@@ -24,6 +24,8 @@ import subprocess
 import sys
 import venv
 
+from pyleus.exception import VirtualenvError
+
 # ------------------------------------------------------------------------------
 
 # Module version
@@ -56,12 +58,13 @@ def to_str(data, encoding=None):
 def _exec_shell_cmd(cmd, stdout, stderr, err_msg):
     """Execute a shell command, returning the output
 
-    If the call has a non-zero return code, raise an OSError with err_msg.
+    If the call has a non-zero return code, raise an VirtualenvError with
+    err_msg.
     """
     proc = subprocess.Popen(cmd, stdout=stdout, stderr=stderr)
     out_data, _ = proc.communicate()
     if proc.returncode != 0:
-        raise OSError(err_msg)
+        raise VirtualenvError(err_msg)
     return to_str(out_data)
 
 
@@ -160,6 +163,6 @@ class VirtualenvProxy(object):
                                 cwd=cwd)
         out_data, err_data = proc.communicate()
         if proc.returncode != 0:
-            raise OSError("Failed to execute Python module: {0}."
-                          " Error: {1}".format(module, err_data))
+            raise VirtualenvError("Failed to execute Python module: {0}."
+                                  " Error: {1}".format(module, err_data))
         return to_str(out_data)
