@@ -1,6 +1,8 @@
 from collections import defaultdict
 from collections import namedtuple
 import logging
+import os
+import tempfile
 
 from pyleus.storm import SimpleBolt
 
@@ -26,7 +28,8 @@ class CountWordsBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/word_count_count_words.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'word_count_count_words.log'),
         format="%(message)s",
         filemode='a',
     )

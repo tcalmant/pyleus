@@ -1,5 +1,7 @@
 import logging
 import random
+import os
+import tempfile
 
 from pyleus.storm import Spout
 
@@ -54,7 +56,8 @@ class LineSpout(Spout):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/word_count_lines.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'word_count_lines.log'),
         format="%(message)s",
         filemode='a',
     )
