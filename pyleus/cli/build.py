@@ -54,7 +54,7 @@ def _zip_dir(src, arc):
     Note: If the archive already exists, files will be simply
     added to it, but the original archive will not be replaced.
     """
-    src_re = re.compile(src + re.escape(os.sep) + "*")
+    src_re = re.compile(re.escape(src + os.sep) + "*")
     for root, dirs, files in os.walk(src):
         # hack for copying everything but the top directory
         prefix = re.sub(src_re, "", root)
