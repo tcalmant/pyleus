@@ -1,6 +1,7 @@
 import pytest
 try:
     import venv
+    _ = venv # pyflakes
 except ImportError:
     pytest.skip("venv module is missing")
 
