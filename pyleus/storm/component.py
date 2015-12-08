@@ -143,10 +143,20 @@ class Component(object):
         super(Component, self).__init__()
 
         if input_stream is None:
-            input_stream = sys.stdin
+            try:
+                # Python 3 has a "buffer" member for binary input
+                input_stream = sys.stdin.buffer
+            except AttributeError:
+                # Direct access in Python 2
+                input_stream = sys.stdin
 
         if output_stream is None:
-            output_stream = sys.stdout
+            try:
+                # Python 3 has a "buffer" member for binary output
+                output_stream = sys.stdout.buffer
+            except AttributeError:
+                # Direct access in Python 2
+                output_stream = sys.stdout
 
         self._input_stream = input_stream
         self._output_stream = output_stream
