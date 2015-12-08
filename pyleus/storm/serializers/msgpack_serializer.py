@@ -9,7 +9,7 @@ from pyleus.storm.serializers.serializer import Serializer
 
 
 def _messages_generator(input_stream):
-    unpacker = msgpack.Unpacker()
+    unpacker = msgpack.Unpacker(encoding="utf-8")
     while True:
         # f.read(n) on sys.stdin blocks until n bytes are read, causing
         # serializer to hang.
@@ -46,5 +46,5 @@ class MsgpackSerializer(Serializer):
         """"Messages are delimited by msgapck itself, no need for Storm
         multilang end line.
         """
-        msgpack.pack(msg_dict, self._output_stream)
+        msgpack.pack(msg_dict, self._output_stream, encoding="utf-8")
         self._output_stream.flush()
