@@ -1,20 +1,17 @@
+import pytest
 try:
     import venv
 except ImportError:
-    venv = None
+    pytest.skip("venv module is missing")
 
 import os
 import subprocess
 import tempfile
 
-import pytest
-
 from pyleus import exception
 from pyleus.cli import venv_proxy
 from pyleus.cli.venv_proxy import VirtualenvProxy
 from pyleus.testing import mock, builtins
-
-pytestmark = pytest.mark.skipif(venv is None, reason="venv module is missing")
 
 VENV_PATH = tempfile.mkdtemp(prefix="pyleus_venv_")
 PYPI_URL = "http://pypi-ninja.ninjacorp.com/simple"
