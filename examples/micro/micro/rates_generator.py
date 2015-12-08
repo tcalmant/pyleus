@@ -2,6 +2,8 @@ from collections import namedtuple
 import logging
 import random
 import time
+import os
+import tempfile
 
 from pyleus.storm import Spout
 
@@ -28,7 +30,8 @@ class RatesGeneratorSpout(Spout):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/micro_exchange_rates.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'micro_exchange_rates.log'),
         format="%(message)s",
         filemode='a',
     )

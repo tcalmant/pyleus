@@ -4,6 +4,8 @@ from array import array
 from collections import defaultdict
 import logging
 import time
+import os
+import tempfile
 
 from pyleus.storm import SimpleBolt
 
@@ -74,7 +76,8 @@ class HeatIndexBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/apparent_temperature_heat_index.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'apparent_temperature_heat_index.log'),
         filemode='a',
     )
 

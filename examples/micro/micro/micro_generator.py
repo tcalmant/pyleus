@@ -1,6 +1,8 @@
 import logging
 import random
 import time
+import os
+import tempfile
 
 from pyleus.storm import Spout
 
@@ -33,7 +35,8 @@ class MicroGeneratorSpout(Spout):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/micro_microtransactions.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'micro_microtransactions.log'),
         format="%(message)s",
         filemode='a',
     )

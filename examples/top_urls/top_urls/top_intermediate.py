@@ -4,6 +4,8 @@ from collections import defaultdict
 import logging
 from operator import itemgetter
 import time
+import os
+import tempfile
 
 from pyleus.storm import SimpleBolt
 
@@ -64,7 +66,8 @@ class TopIntermediateBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/top_urls_top_intermediate.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'top_urls_top_intermediate.log'),
         filemode='a',
     )
 

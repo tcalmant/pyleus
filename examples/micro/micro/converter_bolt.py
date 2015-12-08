@@ -1,4 +1,6 @@
 import logging
+import os
+import tempfile
 
 from pyleus.storm import SimpleBolt
 
@@ -44,7 +46,8 @@ class ConverterBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/micro_conversions.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'micro_conversions.log'),
         format="%(message)s",
         filemode='a',
     )

@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 
 import logging
+import os
+import tempfile
 
 from pyleus.storm import SimpleBolt
 
@@ -27,7 +29,8 @@ class ExclamationBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/exclamation_bolt.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'exclamation_bolt.log'),
         filemode='a',
     )
 

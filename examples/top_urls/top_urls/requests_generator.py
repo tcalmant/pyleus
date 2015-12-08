@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 
 import logging
+import os
+import tempfile
 
 from random import choice
 import time
@@ -58,7 +60,8 @@ class RequestsGeneratorSpout(Spout):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/top_urls_requests_generator.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'top_urls_requests_generator.log'),
         filemode='a',
     )
 

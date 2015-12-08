@@ -4,6 +4,8 @@ import logging
 
 from collections import namedtuple
 import random
+import os
+import tempfile
 
 from apparent_temperature.measure_generator import MeasureGeneratorSpout
 
@@ -45,7 +47,8 @@ class HumiditySpout(MeasureGeneratorSpout):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/apparent_temperature_humidity.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'apparent_temperature_humidity.log'),
         filemode='a',
     )
 

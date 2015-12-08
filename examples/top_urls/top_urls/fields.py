@@ -1,5 +1,7 @@
 from collections import namedtuple
 import logging
+import os
+import tempfile
 
 from pyleus.json_fields_bolt import JSONFieldsBolt
 
@@ -27,7 +29,8 @@ class FieldsBolt(JSONFieldsBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/top_urls_fields.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'top_urls_fields.log'),
         filemode='a',
     )
 

@@ -2,6 +2,9 @@ from __future__ import absolute_import, division
 
 import logging
 import time
+import os
+import tempfile
+
 from pyleus.storm import SimpleBolt
 from bandwith_monitoring.traffic_aggregator import Traffic
 
@@ -28,7 +31,8 @@ class TrafficMonitorBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/bandwith_monitoring_traffic_monitor.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'bandwith_monitoring_traffic_monitor.log'),
         filemode='a',
     )
 

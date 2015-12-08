@@ -4,6 +4,8 @@ import logging
 
 import random
 import time
+import os
+import tempfile
 
 from pyleus.storm import Spout
 
@@ -27,7 +29,8 @@ class TestWordSpout(Spout):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/exclamation_spout.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'exclamation_spout.log'),
         filemode='a',
     )
 

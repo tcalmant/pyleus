@@ -4,6 +4,8 @@ from array import array
 import logging
 from collections import defaultdict
 from collections import namedtuple
+import os
+import tempfile
 
 from pyleus.storm import SimpleBolt
 from bandwith_monitoring.access_log_generator import Request
@@ -71,7 +73,8 @@ class TrafficAggregatorBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/bandwith_monitoring_traffic_aggregator.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'bandwith_monitoring_traffic_aggregator.log'),
         filemode='a',
     )
 

@@ -5,6 +5,8 @@ import logging
 from collections import namedtuple
 from random import choice
 import time
+import os
+import tempfile
 
 from pyleus.storm import Spout
 
@@ -13,7 +15,7 @@ log = logging.getLogger('access_log_generator')
 
 Request = namedtuple("Request", "ip_address request size")
 
-_dash_to_zero = lambda size: 0 if size == "-" else long(size)
+_dash_to_zero = lambda size: 0 if size == "-" else int(size)
 
 
 class AccessLogGeneratorSpout(Spout):
@@ -48,7 +50,8 @@ class AccessLogGeneratorSpout(Spout):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/bandwith_monitoring_access_log_generator.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'bandwith_monitoring_access_log_generator.log'),
         filemode='a',
     )
 

@@ -2,6 +2,8 @@ from __future__ import absolute_import
 
 import datetime
 import logging
+import os
+import tempfile
 
 from pyleus.storm import SimpleBolt
 
@@ -20,7 +22,8 @@ class LogTopBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/top_urls_result.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'top_urls_result.log'),
         filemode='a',
     )
 

@@ -1,4 +1,6 @@
 import logging
+import os
+import tempfile
 
 from pyleus.storm import SimpleBolt
 
@@ -29,7 +31,8 @@ class EarningsBolt(SimpleBolt):
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.DEBUG,
-        filename='/tmp/micro_earnings.log',
+        filename=os.path.join(tempfile.gettempdir(),
+                              'micro_earnings.log'),
         format="%(message)s",
         filemode='a',
     )
