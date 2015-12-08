@@ -16,6 +16,20 @@ BASE_JAR_SRC = os.path.join(JAVA_SRC_DIR, "dist", BASE_JAR)
 BASE_JAR_DST = os.path.join("pyleus", BASE_JAR)
 
 
+def which(cmd):
+    try:
+        # Available in Python 3.3+
+        return shutil.which(cmd)
+    except AttributeError:
+        # Not implemented
+        if os.name == 'win32':
+            # File won't be found as is
+            return None
+        else:
+            # Seems to work as is on POSIX systems
+            return cmd
+
+
 class build_java(Command):
 
     description = "Build the topology base JAR"
@@ -28,7 +42,7 @@ class build_java(Command):
         pass
 
     def _make_jar_make(self):
-        make_path = shutil.which('make')
+        make_path = which('make')
         if not make_path:
             raise IOError("make executable not found")
 
@@ -38,7 +52,7 @@ class build_java(Command):
         pom_file = os.path.join(JAVA_SRC_DIR, 'pom.xml')
 
         # Try the "mvn" command (in path)
-        mvn_path = shutil.which('mvn')
+        mvn_path = which('mvn')
         if mvn_path:
             # Try the "mvn" command (in path)
             subprocess.check_call([mvn_path, '-f', pom_file, 'package'])
