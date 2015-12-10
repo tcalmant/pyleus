@@ -46,5 +46,6 @@ class MsgpackSerializer(Serializer):
         """"Messages are delimited by msgapck itself, no need for Storm
         multilang end line.
         """
-        msgpack.pack(msg_dict, self._output_stream, encoding="utf-8")
+        msgpack.pack(msg_dict, self._output_stream, use_bin_type=True,
+                     encoding="utf-8")
         self._output_stream.flush()
