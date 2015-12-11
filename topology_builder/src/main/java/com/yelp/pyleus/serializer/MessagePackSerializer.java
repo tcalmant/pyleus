@@ -1,13 +1,23 @@
 package com.yelp.pyleus.serializer;
 
+import static org.msgpack.template.Templates.TString;
+import static org.msgpack.template.Templates.TValue;
+import static org.msgpack.template.Templates.tList;
+import static org.msgpack.template.Templates.tMap;
+
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.DataOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
+
+import org.apache.log4j.Logger;
+import org.msgpack.MessagePack;
+import org.msgpack.template.Template;
+import org.msgpack.type.Value;
 
 import backtype.storm.multilang.BoltMsg;
 import backtype.storm.multilang.ISerializer;
@@ -16,17 +26,6 @@ import backtype.storm.multilang.ShellMsg;
 import backtype.storm.multilang.SpoutMsg;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.utils.Utils;
-
-import org.apache.log4j.Logger;
-import org.msgpack.MessagePack;
-import org.msgpack.template.Template;
-
-import static org.msgpack.template.Templates.tMap;
-import static org.msgpack.template.Templates.TString;
-import static org.msgpack.template.Templates.TValue;
-import static org.msgpack.template.Templates.tList;
-
-import org.msgpack.type.Value;
 
 public class MessagePackSerializer implements ISerializer {
     public static Logger LOG = Logger.getLogger(MessagePackSerializer.class);
@@ -149,7 +148,8 @@ public class MessagePackSerializer implements ISerializer {
     private Object valueToJavaType(Value element) {
         switch (element.getType()) {
             case RAW:
-                return element.asRawValue().getString();
+                // return element.asRawValue().getString();
+                return element.asRawValue().getByteArray();
             case INTEGER:
                 return element.asIntegerValue().getLong();
             case FLOAT:
