@@ -8,7 +8,6 @@ import java.util.Map;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import com.yelp.pyleus.bolt.PythonBolt;
-import com.yelp.pyleus.serializer.MessagePackSerializer;
 import com.yelp.pyleus.spec.BoltSpec;
 import com.yelp.pyleus.spec.ComponentSpec;
 import com.yelp.pyleus.spec.SpoutSpec;
@@ -34,11 +33,11 @@ import storm.kafka.StringKeyValueScheme;
 import storm.kafka.ZkHosts;
 
 public class PyleusTopologyBuilder {
+
     public static final String YAML_FILENAME = "/resources/pyleus_topology.yaml";
     public static final String KAFKA_ZK_ROOT_FMT = "/pyleus-kafka-offsets/%s";
     public static final String KAFKA_CONSUMER_ID_FMT = "pyleus-%s";
-    public static final String MSGPACK_SERIALIZER_CLASS = MessagePackSerializer.class.getName();
-    
+    public static final String MSGPACK_SERIALIZER_CLASS = "com.yelp.pyleus.serializer.MessagePackSerializer";
 
     public static final PythonComponentsFactory pyFactory = new PythonComponentsFactory();
 
@@ -346,6 +345,10 @@ public class PyleusTopologyBuilder {
 
             if (spec.transfer_buffer_size != -1) {
                 conf.put(Config.TOPOLOGY_TRANSFER_BUFFER_SIZE, spec.transfer_buffer_size);
+            }
+            
+            if (spec.global_options != null) {
+            	conf.put("global_options", spec.global_options);
             }
 
             try {

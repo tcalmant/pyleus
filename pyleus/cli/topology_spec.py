@@ -75,6 +75,9 @@ class TopologySpec(object):
         self.requirements_filename = specs.get("requirements_filename")
         self.python_interpreter = specs.get("python_interpreter")
 
+        if "global_options" in specs:
+            self.global_options = specs["global_options"]
+
         self.topology = []
         for component in specs["topology"]:
             if "spout" in component:

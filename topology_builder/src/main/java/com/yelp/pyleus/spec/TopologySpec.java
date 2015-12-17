@@ -2,6 +2,7 @@ package com.yelp.pyleus.spec;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
@@ -41,6 +42,8 @@ public class TopologySpec {
     public String requirements_filename; // Not used in Java.
     @SuppressWarnings("unused")
     public String python_interpreter; // Not used in Java.
+    
+    public Map<String, Object> global_options;
 
     private static Constructor getConstructor() {
         Constructor constructor = new Constructor(TopologySpec.class);
