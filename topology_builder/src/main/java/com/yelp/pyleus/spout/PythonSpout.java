@@ -1,11 +1,18 @@
 package com.yelp.pyleus.spout;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
+
+import com.yelp.pyleus.PythonComponentsFactory;
 
 import backtype.storm.Config;
 import backtype.storm.spout.ShellSpout;
+import backtype.storm.spout.SpoutOutputCollector;
+import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.tuple.Fields;
@@ -13,13 +20,41 @@ import backtype.storm.tuple.Fields;
 public class PythonSpout extends ShellSpout implements IRichSpout {
     protected Map<String, Object> outputFields;
     protected Float tickFreqSecs = null;
+    protected String[] localCommand;
 
     public PythonSpout(final String... command) {
-        super(command);
+        super();
+        localCommand = Arrays.copyOf(command, command.length);
     }
 
     public void setOutputFields(final Map<String, Object> outputFields) {
         this.outputFields = outputFields;
+    }
+    
+    @Override
+    public void open(@SuppressWarnings("rawtypes") Map stormConf, TopologyContext context,
+            SpoutOutputCollector collector) {
+    	
+    	try {
+    		// Update the field like a barbarian
+	    	Field privateCommandField = ShellSpout.class.getDeclaredField("_command");
+	    	privateCommandField.setAccessible(true);
+	    	privateCommandField.set(this, PythonComponentsFactory.buildCommand(localCommand));
+	    	
+    	} catch(SecurityException ex) {
+    		Logger.getGlobal().severe("Can't update the ShellSpout command: " + ex);
+    	} catch (NoSuchFieldException ex) {
+    		// Can happen if ShellSpout is updated
+    		Logger.getGlobal().severe("ShellSpout seems to have been updated: " + ex);
+		} catch (IllegalArgumentException ex) {
+			// Won't happen
+			Logger.getGlobal().severe("Error updating the ShellSpout command: " + ex);
+		} catch (IllegalAccessException ex) {
+			// Like security error
+			Logger.getGlobal().severe("Error updating the ShellSpout command: " + ex);
+		}
+    	
+    	super.open(stormConf, context, collector);
     }
 
     @Override
