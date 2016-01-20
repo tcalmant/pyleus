@@ -41,6 +41,10 @@ __docformat__ = "restructuredtext en"
 def to_str(data, encoding=None):
     """
     Converts the given input to a string
+
+    :param data: Data to convert (str or bytes)
+    :param encoding: Output encoding
+    :return: A string
     """
     if data is None:
         return
@@ -122,7 +126,8 @@ class VirtualenvProxy(object):
 
     def install_package(self, package):
         """Interface to `pip install SINGLE_PACKAGE`"""
-        cmd = [self._get_path_to_bin('pip'), "install", package]
+        cmd = [self._get_path_to_bin('python'), "-m", "pip",
+               "install", package]
 
         if self._pypi_index_url is not None:
             cmd += ["-i", self._pypi_index_url]
@@ -137,7 +142,8 @@ class VirtualenvProxy(object):
 
     def install_from_requirements(self, req):
         """Interface to `pip install -r REQUIREMENTS_FILE`"""
-        cmd = [self._get_path_to_bin('pip'), "install", "-r", req]
+        cmd = [self._get_path_to_bin('python'), "-m", "pip",
+               "install", "-r", req]
 
         if self._pypi_index_url is not None:
             cmd += ["-i", self._pypi_index_url]
