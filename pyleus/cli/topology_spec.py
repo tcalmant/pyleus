@@ -78,6 +78,9 @@ class TopologySpec(object):
         if "global_options" in specs:
             self.global_options = specs["global_options"]
 
+        if "portable_interpreter" in specs:
+            self.portable_interpreter = specs["portable_interpreter"]
+
         self.topology = []
         for component in specs["topology"]:
             if "spout" in component:
