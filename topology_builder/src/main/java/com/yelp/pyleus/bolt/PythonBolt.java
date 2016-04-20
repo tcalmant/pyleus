@@ -21,6 +21,7 @@ public class PythonBolt extends ShellBolt implements IRichBolt {
     protected Map<String, Object> outputFields;
     protected Float tickFreqSecs = null;
     protected String[] localCommand;
+    protected String portableInterpreter;
 
     public PythonBolt(final String... command) {
         super();
@@ -35,7 +36,7 @@ public class PythonBolt extends ShellBolt implements IRichBolt {
     		// Update the field like a barbarian
 	    	Field privateCommandField = ShellBolt.class.getDeclaredField("_command");
 	    	privateCommandField.setAccessible(true);
-	    	privateCommandField.set(this, PythonComponentsFactory.buildCommand(localCommand));
+	    	privateCommandField.set(this, PythonComponentsFactory.buildCommand(localCommand, portableInterpreter));
 	    	
     	} catch(SecurityException ex) {
     		Logger.getGlobal().severe("Can't update the ShellBot command: " + ex);
@@ -51,6 +52,10 @@ public class PythonBolt extends ShellBolt implements IRichBolt {
 		}
     	
     	super.prepare(stormConf, context, collector);
+    }
+    
+    public void setPortableInterpreter(String interpreter) {
+    	this.portableInterpreter = interpreter;
     }
 
     public void setOutputFields(final Map<String, Object> outputFields) {

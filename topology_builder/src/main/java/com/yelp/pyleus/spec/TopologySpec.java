@@ -45,6 +45,9 @@ public class TopologySpec {
     
     public Map<String, Object> global_options;
 
+    // Force the use of an interpreter instead of the one from virtualenv
+    public String portable_interpreter;
+
     private static Constructor getConstructor() {
         Constructor constructor = new Constructor(TopologySpec.class);
 

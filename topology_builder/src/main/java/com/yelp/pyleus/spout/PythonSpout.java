@@ -21,10 +21,15 @@ public class PythonSpout extends ShellSpout implements IRichSpout {
     protected Map<String, Object> outputFields;
     protected Float tickFreqSecs = null;
     protected String[] localCommand;
-
+    protected String portableInterpreter;
+    
     public PythonSpout(final String... command) {
         super();
         localCommand = Arrays.copyOf(command, command.length);
+    }
+    
+    public void setPortableInterpreter(String interpreter) {
+    	this.portableInterpreter = interpreter;
     }
 
     public void setOutputFields(final Map<String, Object> outputFields) {
@@ -39,7 +44,7 @@ public class PythonSpout extends ShellSpout implements IRichSpout {
     		// Update the field like a barbarian
 	    	Field privateCommandField = ShellSpout.class.getDeclaredField("_command");
 	    	privateCommandField.setAccessible(true);
-	    	privateCommandField.set(this, PythonComponentsFactory.buildCommand(localCommand));
+	    	privateCommandField.set(this, PythonComponentsFactory.buildCommand(localCommand, portableInterpreter));
 	    	
     	} catch(SecurityException ex) {
     		Logger.getGlobal().severe("Can't update the ShellSpout command: " + ex);

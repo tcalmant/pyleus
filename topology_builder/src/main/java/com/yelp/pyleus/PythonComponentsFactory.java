@@ -1,5 +1,6 @@
 package com.yelp.pyleus;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,18 +22,53 @@ public class PythonComponentsFactory {
      * Builds Python arguments for the active operating system
      * 
      * @param pythonArguments Arguments to be given to the Python interpreter
+     * @param portablePython Path to a portable interpreter
      * @return The command line as a list
      */
     public static String[] buildCommand(String[] pythonArguments) {
+    	return buildCommand(pythonArguments, null);
+    }
+    
+    /**
+     * Builds Python arguments for the active operating system
+     * 
+     * @param pythonArguments Arguments to be given to the Python interpreter
+     * @param portablePython Path to a portable interpreter
+     * @return The command line as a list
+     */
+    public static String[] buildCommand(String[] pythonArguments, String portablePython) {
+    	
+    	// Flag to tell our host OS
+    	boolean onWindows = System.getProperty("os.name").toLowerCase().contains("windows");
     	
     	List<String> command = new ArrayList<String>();
+    	if(onWindows && portablePython != null && new File(portablePython).exists()) {
+    		if(!portablePython.endsWith(".exe")) {
+    			// Bad interpreter
+    			portablePython = null;
+    		}
+    	} else {
+    		// Not in valid conditions to use a portable Python
+    		portablePython = null;
+    	}
     	
-    	if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+    	// Set up the interpreter to use
+    	String pythonInterpreter = null;
+    	if(onWindows) {
+    		pythonInterpreter = VIRTUALENV_INTERPRETER_WINDOWS;
+    		if(portablePython != null) {
+    			pythonInterpreter = portablePython;
+    		}
+    	} else {
+    		pythonInterpreter = VIRTUALENV_INTERPRETER_UNIX;
+    	}
+    	
+    	if(onWindows) {
     		// Use cmd.exe to avoid looking for the exact path to 
     		// the interpreter
     		command.add("cmd.exe");
         	command.add("/c");
-        	command.add(VIRTUALENV_INTERPRETER_WINDOWS);
+        	command.add(pythonInterpreter);
         	
         	// Add all other arguments as is
         	command.addAll(Arrays.asList(pythonArguments));
@@ -47,7 +83,7 @@ public class PythonComponentsFactory {
     		// Done before launching any spout or bolt in order to cope
     		// with Storm permissions bug
             strBuf.append(String.format("chmod 755 %1$s; %1$s",
-            		VIRTUALENV_INTERPRETER_UNIX));
+            		pythonInterpreter));
             
             
             boolean protectNext = false;

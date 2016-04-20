@@ -33,7 +33,7 @@ import storm.kafka.StringKeyValueScheme;
 import storm.kafka.ZkHosts;
 
 public class PyleusTopologyBuilder {
-
+	
     public static final String YAML_FILENAME = "/resources/pyleus_topology.yaml";
     public static final String KAFKA_ZK_ROOT_FMT = "/pyleus-kafka-offsets/%s";
     public static final String KAFKA_CONSUMER_ID_FMT = "pyleus-%s";
@@ -46,6 +46,10 @@ public class PyleusTopologyBuilder {
 
         PythonBolt bolt = pyFactory.createPythonBolt(spec.module,
                 spec.options, topologySpec.logging_config, topologySpec.serializer);
+        
+        if (topologySpec.portable_interpreter != null) {
+        	bolt.setPortableInterpreter(topologySpec.portable_interpreter);
+        }
 
         if (spec.output_fields != null) {
             bolt.setOutputFields(spec.output_fields);
@@ -180,6 +184,10 @@ public class PyleusTopologyBuilder {
 
         PythonSpout spout = pyFactory.createPythonSpout(spec.module,
                 spec.options, topologySpec.logging_config, topologySpec.serializer);
+        
+        if (topologySpec.portable_interpreter != null) {
+        	spout.setPortableInterpreter(topologySpec.portable_interpreter);
+        }
 
         if (spec.output_fields != null) {
             spout.setOutputFields(spec.output_fields);
@@ -346,9 +354,13 @@ public class PyleusTopologyBuilder {
             if (spec.transfer_buffer_size != -1) {
                 conf.put(Config.TOPOLOGY_TRANSFER_BUFFER_SIZE, spec.transfer_buffer_size);
             }
-            
+
             if (spec.global_options != null) {
-            	conf.put("global_options", spec.global_options);
+                conf.put("global_options", spec.global_options);
+            }
+
+            if (spec.portable_interpreter != null) {
+                conf.put("portable_interpreter", spec.portable_interpreter);
             }
 
             try {
